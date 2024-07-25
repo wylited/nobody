@@ -1,11 +1,33 @@
-#include "imgui.h"
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+#include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "camera.h"
 #include "gui.h"
 #include "render.h"
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f,
+              0.0f);
+float lastX = 1280.0f / 2.0;
+float lastY = 720.0f / 2.0;
+bool firstMouse = true;
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+  if (firstMouse) {
+    lastX = xpos;
+    lastY = ypos;
+    firstMouse = false;
+  }
+
+  float xoffset = xpos - lastX;
+  float yoffset = lastY - ypos;
+  lastX = xpos;
+  lastY = ypos;
+
+  camera.ProcessMouseMovement(xoffset, yoffset);
+}
 
 int main(int, char **) {
   // Initialize GLFW and create a window
@@ -36,8 +58,26 @@ int main(int, char **) {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 130");
 
+  // Set the mouse callback
+  glfwSetCursorPosCallback(window, mouse_callback);
+
   // Main loop
   while (!glfwWindowShouldClose(window)) {
+    float currentFrame = glfwGetTime();
+    static float lastFrame = 0.0f;
+    float deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
+    // Process input
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+      camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+      camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+      camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+      camera.ProcessKeyboard(RIGHT, deltaTime);
+
     glfwPollEvents();
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -47,7 +87,7 @@ int main(int, char **) {
     renderGUI();
 
     // Render 3D scene (in this case, a sphere)
-    renderScene();
+    renderScene(camera);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

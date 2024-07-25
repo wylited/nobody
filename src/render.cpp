@@ -1,6 +1,9 @@
 #include "render.h"
 #include "imgui.h"
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void renderGUI() {
   // GUI code here
@@ -9,7 +12,7 @@ void renderGUI() {
   ImGui::End();
 }
 
-void renderScene() {
+void renderScene(Camera &camera) {
   // 3D rendering code here
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
@@ -18,7 +21,8 @@ void renderScene() {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+  glm::mat4 view = camera.GetViewMatrix();
+  glLoadMatrixf(glm::value_ptr(view));
 
   // Draw a sphere
   GLUquadric *quadric = gluNewQuadric();
