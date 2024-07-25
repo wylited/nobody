@@ -3,7 +3,7 @@ EXE = nobody
 
 # Set the source files
 IMGUI_DIR = imgui
-SOURCES = src/main.cpp
+SOURCES = $(wildcard src/*.cpp)
 SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 SOURCES += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 
@@ -15,7 +15,7 @@ INCLUDES = -Iimgui -Iimgui/backends
 
 # Set the compiler flags
 CXXFLAGS = -std=c++11 -Wall -Wformat -g
-CXXFLAGS += -lGL
+CXXFLAGS += -lGL -lGLU
 
 # Set the linker flags
 LINUX_GL_LIBS = -lGL
@@ -61,7 +61,7 @@ endif
 all: $(EXE)
 
 $(EXE): $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(LIBS) -lGL -o $@ $^
+	$(CXX) $(LDFLAGS) $(LIBS) -lGL -lGLU -o $@ $^
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
