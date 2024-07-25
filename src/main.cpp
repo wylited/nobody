@@ -42,6 +42,9 @@ int main(int, char **) {
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1); // Enable vsync
 
+  // Register the framebuffer size callback
+  glfwSetFramebufferSizeCallback(window, glfw_framebuffer_size_callback);
+
   // Initialize Dear ImGui
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
