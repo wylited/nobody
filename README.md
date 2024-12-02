@@ -5,8 +5,9 @@ made with bevy.rs
 
 ## Development
 
-to run locally
+To run locally or on the web.
 
 ```shell
 cargo run --features bevy/dynamic_linking
+cargo run --target wasm32-unknown-unknown
 ```
